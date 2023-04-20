@@ -2,10 +2,12 @@ package com.example.hanghaehomework.entity;
 
 
 import com.example.hanghaehomework.dto.BoardRequestDto;
-import jakarta.persistence.*;
+
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
 
 
 @Getter

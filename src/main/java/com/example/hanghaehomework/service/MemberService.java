@@ -1,16 +1,16 @@
 package com.example.hanghaehomework.service;
 
+
 import com.example.hanghaehomework.dto.MemberRequestDto;
 import com.example.hanghaehomework.dto.SignupRequestDto;
 import com.example.hanghaehomework.entity.Member;
 import com.example.hanghaehomework.jwt.JwtUtil;
 import com.example.hanghaehomework.repository.MemberRepository;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 @Service
@@ -19,7 +19,6 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final JwtUtil jwtUtil;
-
 
 
     @Transactional
