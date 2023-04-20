@@ -3,6 +3,7 @@ package com.example.hanghaehomework.controller;
 import com.example.hanghaehomework.dto.MemberRequestDto;
 import com.example.hanghaehomework.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,7 +15,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/api/auth/login")
-    public String login(MemberRequestDto memberRequestDto, HttpServletRequest response){
+    public String login(MemberRequestDto memberRequestDto, HttpServletResponse response){
         memberService.login(memberRequestDto, response);
         return "로그인 성공";
     }
