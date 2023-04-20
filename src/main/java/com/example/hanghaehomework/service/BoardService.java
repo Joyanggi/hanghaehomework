@@ -3,11 +3,16 @@ package com.example.hanghaehomework.service;
 import com.example.hanghaehomework.dto.BoardRequestDto;
 import com.example.hanghaehomework.dto.BoardResponseDto;
 import com.example.hanghaehomework.entity.Board;
+import com.example.hanghaehomework.entity.Member;
+import com.example.hanghaehomework.jwt.JwtUtil;
 import com.example.hanghaehomework.repository.BoardRepository;
+import com.example.hanghaehomework.repository.MemberRepository;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,10 +20,15 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BoardService {
     public final BoardRepository boardRepository ;
+    private final MemberRepository memberRepository;
+    private final JwtUtil jwtUtil;
 
 
     //게시글 작성
-    public BoardResponseDto createBoard(BoardRequestDto requestDto) {
+    public BoardResponseDto createBoard(BoardRequestDto requestDto, HttpServletRequest request) {
+        Member member = checkJwtToken(request);
+
+
         Board board = new Board(requestDto);
         return new BoardResponseDto(boardRepository.save(board));
     }
@@ -40,28 +50,44 @@ public class BoardService {
     }
 
     //게시글 수정
-    public  BoardResponseDto update(Long id, BoardRequestDto requestDto) {
+    public  BoardResponseDto update(Long id, BoardRequestDto requestDto, HttpServletRequest request) {
+        Member member = checkJwtToken(request);
+
         Board board =boardRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("게시글이 수정되었습니다.")
+                () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
         );
-        if(requestDto.getPassword().equals(board.getPassword())){
-            board.update(requestDto);
-        } else {
-            return new BoardResponseDto();
-        }
+
+        board.update(requestDto);
         return new BoardResponseDto(board);
     }
 
     //게시글 삭제
-    public  String deleteBoard(Long id, String password) {
+    public  String deleteBoard(Long id, HttpServletRequest request) {
+        String token = jwtUtil.resolveToken(request);
+
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
         );
-        if(password.equals(board.getPassword())){
-            boardRepository.deleteById(id);
-        } else {
-            return "비밀번호가 틀립니다.";
+        boardRepository.deleteById(id);
+
+        return "게시글 삭제 성공.";
+    }
+
+    public Member checkJwtToken(HttpServletRequest request){
+        String token = jwtUtil.resolveToken(request);
+        Claims claims;
+        if(token != null){
+            if(jwtUtil.validateToken(token)){
+                claims = jwtUtil.getUserInfoFromToken(token);
+            }else{
+                throw new IllegalArgumentException("Token Error");
+            }
+
+            Member member = memberRepository.findByUsername(claims.getSubject()).orElseThrow(
+                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다")
+            );
+            return member;
         }
-        return "게시글이 삭제되었습니다.";
+        return null;
     }
 }
