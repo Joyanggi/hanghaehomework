@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+
 import java.util.stream.Collectors;
 
 @Service
@@ -28,7 +29,9 @@ public class BoardService {
     @Transactional
     public BoardResponseDto createBoard(BoardRequestDto requestDto, HttpServletRequest request) {
         Member member = checkJwtToken(request);
-
+            if (member == null) {
+            throw new IllegalArgumentException("로그인이 필요합니다.");
+        }
 
         Board board = new Board(requestDto);
         return new BoardResponseDto(boardRepository.save(board));
@@ -37,7 +40,7 @@ public class BoardService {
     //게시글 목록 조회
     @Transactional(readOnly = true)
     public List<BoardResponseDto> getList() {
-        return boardRepository.findAllByOrderByCreatedAtDesc().stream()
+        return boardRepository.findAllByOrderByModifiedAtDesc().stream()
                 .map(BoardResponseDto::new).collect(Collectors.toList());
     }
 
