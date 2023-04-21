@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+
 import java.util.stream.Collectors;
 
 @Service
@@ -25,9 +26,12 @@ public class BoardService {
 
 
     //게시글 작성
+    @Transactional
     public BoardResponseDto createBoard(BoardRequestDto requestDto, HttpServletRequest request) {
         Member member = checkJwtToken(request);
-
+            if (member == null) {
+            throw new IllegalArgumentException("로그인이 필요합니다.");
+        }
 
         Board board = new Board(requestDto);
         return new BoardResponseDto(boardRepository.save(board));
@@ -36,7 +40,7 @@ public class BoardService {
     //게시글 목록 조회
     @Transactional(readOnly = true)
     public List<BoardResponseDto> getList() {
-        return boardRepository.findAllByOrderByCreatedAtDesc().stream()
+        return boardRepository.findAllByOrderByModifiedAtDesc().stream()
                 .map(BoardResponseDto::new).collect(Collectors.toList());
     }
 
@@ -50,6 +54,7 @@ public class BoardService {
     }
 
     //게시글 수정
+    @Transactional
     public  BoardResponseDto update(Long id, BoardRequestDto requestDto, HttpServletRequest request) {
         Member member = checkJwtToken(request);
 
@@ -62,8 +67,9 @@ public class BoardService {
     }
 
     //게시글 삭제
+    @Transactional
     public  String deleteBoard(Long id, HttpServletRequest request) {
-        String token = jwtUtil.resolveToken(request);
+        Member member = checkJwtToken(request);
 
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
@@ -87,7 +93,8 @@ public class BoardService {
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다")
             );
             return member;
+        }else {
+            return null;
         }
-        return null;
     }
 }

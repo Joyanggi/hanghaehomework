@@ -1,6 +1,7 @@
 package com.example.hanghaehomework.entity;
 
-import jakarta.persistence.*;
+import com.example.hanghaehomework.dto.SignupRequestDto;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,7 +19,15 @@ public class Member {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
-    private String userId;
 
+
+    public Member(SignupRequestDto signupRequestDto) {
+
+        this.username = signupRequestDto.getUsername();
+        this.password = signupRequestDto.getPassword();
+
+    }
 }
+
+
+

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,7 +28,7 @@ public class MemberController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signup(@RequestBody SignupRequestDto signupRequestDto) {
+    public ResponseEntity<String> signup(@RequestBody @Valid SignupRequestDto signupRequestDto) {
         memberService.signup(signupRequestDto);
         return new ResponseEntity<>("회원가입 성공", HttpStatus.CREATED);
     }
