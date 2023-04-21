@@ -25,6 +25,7 @@ public class BoardService {
 
 
     //게시글 작성
+    @Transactional
     public BoardResponseDto createBoard(BoardRequestDto requestDto, HttpServletRequest request) {
         Member member = checkJwtToken(request);
 
@@ -50,6 +51,7 @@ public class BoardService {
     }
 
     //게시글 수정
+    @Transactional
     public  BoardResponseDto update(Long id, BoardRequestDto requestDto, HttpServletRequest request) {
         Member member = checkJwtToken(request);
 
@@ -62,8 +64,9 @@ public class BoardService {
     }
 
     //게시글 삭제
+    @Transactional
     public  String deleteBoard(Long id, HttpServletRequest request) {
-        String token = jwtUtil.resolveToken(request);
+        Member member = checkJwtToken(request);
 
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
@@ -87,7 +90,8 @@ public class BoardService {
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다")
             );
             return member;
+        }else {
+            return null;
         }
-        return null;
     }
 }

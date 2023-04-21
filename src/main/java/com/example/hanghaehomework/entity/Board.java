@@ -19,8 +19,8 @@ public class Board extends Timestamped {
     private Long id;
     @Column(nullable = false)
     private String username;
-    @Column(nullable = false)
-    private String password;
+//    @Column(nullable = false)
+//    private String password;
     @Column(nullable = false)
     private String title;
     @Column(nullable = false)
@@ -28,7 +28,7 @@ public class Board extends Timestamped {
 
     public Board(BoardRequestDto requestDto) {
         this.username = requestDto.getUsername();
-        this.password = requestDto.getPassword();
+//        this.password = requestDto.getPassword();
         this.title = requestDto.getTitle();
         this.contents = requestDto.getContents();
     }
