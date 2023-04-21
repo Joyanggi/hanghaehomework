@@ -21,14 +21,14 @@ public class MemberService {
     private final JwtUtil jwtUtil;
 
 
-    @Transactional
-        public void login(MemberRequestDto memberRequestDto, HttpServletResponse response){
-            String userName = memberRequestDto.getUsername();
-            String password = memberRequestDto.getPassword();
+    @Transactional(readOnly = true)
+    public void login(MemberRequestDto memberRequestDto, HttpServletResponse response){
+        String userName = memberRequestDto.getUsername();
+        String password = memberRequestDto.getPassword();
 
-            Member member = memberRepository.findByUserId(userName).orElseThrow(
-                    () -> new IllegalArgumentException("등록된 아이디가 없습니다.")
-            );
+        Member member = memberRepository.findByUsername(userName).orElseThrow(
+                () -> new IllegalArgumentException("등록된 아이디가 없습니다.")
+        );
 
         if(!member.getPassword().equals(password)){
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
@@ -38,7 +38,7 @@ public class MemberService {
     @Transactional
     public void signup(SignupRequestDto signupRequestDto)  {
         //회원가입 유저 아이디 중복확인
-        Optional<Member> overlapUser = memberRepository.findByUserId(signupRequestDto.getUsername());
+        Optional<Member> overlapUser = memberRepository.findByUsername(signupRequestDto.getUsername());
         if(overlapUser.isPresent()) throw new IllegalArgumentException("중복된 아이디가 있습니다.");
         memberRepository.save(new Member(signupRequestDto));
 
