@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Getter
@@ -18,14 +20,16 @@ public class Board extends Timestamped {
     @Column(name = "board_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
     @Column(nullable = false)
     private String title;
     @Column(nullable = false)
     private String contents;
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    @OrderBy("createdAt DESC")
+    private List<Comment> commentList = new ArrayList<>();
 
     public Board(BoardRequestDto requestDto) {
         this.member = requestDto.getMember();
