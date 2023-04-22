@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -41,8 +42,8 @@ public class BoardService {
     //게시글 목록 조회
     @Transactional(readOnly = true)
     public List<BoardResponseDto> getList() {
-        return boardRepository.findAllByOrderByModifiedAtDesc().stream()
-                .map(BoardResponseDto::new).collect(Collectors.toList());
+        List<Board> boardList = boardRepository.findAll();
+        return boardList.stream().sorted((memo1, memo2) -> memo2.getModifiedAt().compareTo(memo1.getModifiedAt())).map(BoardResponseDto::new).toList();
     }
 
     //선택한 게시글 조회
