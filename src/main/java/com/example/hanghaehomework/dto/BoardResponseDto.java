@@ -1,6 +1,7 @@
 package com.example.hanghaehomework.dto;
 
 import com.example.hanghaehomework.entity.Board;
+import com.example.hanghaehomework.entity.Member;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,7 +20,7 @@ public class BoardResponseDto {
 
     public BoardResponseDto(Board board){
         this.id = board.getId();
-        this.username = board.getUsername();
+        this.username = board.getMember().getUsername();
         this.title = board.getTitle();
         this.contents = board.getContents();
         this.createdAt = board.getCreatedAt();

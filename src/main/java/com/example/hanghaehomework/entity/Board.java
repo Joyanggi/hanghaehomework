@@ -15,20 +15,20 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Board extends Timestamped {
     @Id
+    @Column(name = "board_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Column(nullable = false)
-    private String username;
-//    @Column(nullable = false)
-//    private String password;
+
+    @ManyToOne()
+    @JoinColumn(name = "member_id")
+    private Member member;
     @Column(nullable = false)
     private String title;
     @Column(nullable = false)
     private String contents;
 
     public Board(BoardRequestDto requestDto) {
-        this.username = requestDto.getUsername();
-//        this.password = requestDto.getPassword();
+        this.member = requestDto.getMember();
         this.title = requestDto.getTitle();
         this.contents = requestDto.getContents();
     }
@@ -37,7 +37,7 @@ public class Board extends Timestamped {
 
 
     public void update(BoardRequestDto requestDto) {
-        this.username = requestDto.getUsername();
+        this.member = requestDto.getMember();
         this.title = requestDto.getTitle();
         this.contents = requestDto.getContents();
     }

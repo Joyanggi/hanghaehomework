@@ -4,6 +4,7 @@ import com.example.hanghaehomework.dto.BoardRequestDto;
 import com.example.hanghaehomework.dto.BoardResponseDto;
 import com.example.hanghaehomework.entity.Board;
 import com.example.hanghaehomework.entity.Member;
+import com.example.hanghaehomework.entity.UserRoleEnum;
 import com.example.hanghaehomework.jwt.JwtUtil;
 import com.example.hanghaehomework.repository.BoardRepository;
 import com.example.hanghaehomework.repository.MemberRepository;
@@ -32,7 +33,7 @@ public class BoardService {
             if (member == null) {
             throw new IllegalArgumentException("로그인이 필요합니다.");
         }
-
+        requestDto.setMember(member);
         Board board = new Board(requestDto);
         return new BoardResponseDto(boardRepository.save(board));
     }
@@ -61,8 +62,11 @@ public class BoardService {
         Board board =boardRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
         );
-
-        board.update(requestDto);
+        if(member.getUsername().equals(board.getMember().getUsername()) || member.getRole() == UserRoleEnum.ADMIN) {
+            board.update(requestDto);
+        }else{
+            throw new IllegalArgumentException("권한이 없습니다");
+        }
         return new BoardResponseDto(board);
     }
 
@@ -74,7 +78,11 @@ public class BoardService {
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
         );
-        boardRepository.deleteById(id);
+        if(member.getUsername().equals(board.getMember().getUsername()) || member.getRole() == UserRoleEnum.ADMIN) {
+            boardRepository.deleteById(id);
+        }else{
+            throw new IllegalArgumentException("권한이 없습니다");
+        }
 
         return "게시글 삭제 성공.";
     }
